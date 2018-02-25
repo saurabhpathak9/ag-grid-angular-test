@@ -9,7 +9,7 @@ export class WebWorkerService {
   constructor() {
   }
 
-  postMessage(message:any) {
+  postMessage(message: any) {
 
     this.messageWorker.onmessage = function (event) {
       const data = event.data;

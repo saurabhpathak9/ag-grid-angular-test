@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { GridOptions } from "ag-grid";
+import { GridOptions } from 'ag-grid';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { WebWorkerService } from '../services/web-worker.service';
 
 @Component({
-  selector: 'grid-application',
+  selector: 'app-grid-application',
   templateUrl: './my-grid-application.component.html',
   styleUrls: ['./my-grid-application.component.css']
 })
@@ -24,17 +24,17 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
     this.webWorker = webWorkerService;
     this.gridOptions = <GridOptions>{};
     this.gridOptions.columnDefs = [
-      { headerName: "ID", field: "id" },
-      { headerName: "Value A", field: "valueA" },
-      { headerName: "Value B", field: "valueB" },
-      { headerName: "Value C", field: "valueC" },
-      { headerName: "Value D", field: "valueD" },
-      { headerName: "Value E", field: "valueE" },
-      { headerName: "Value F", field: "valueF" },
-      { headerName: "Value G", field: "valueG" },
-      { headerName: "Value H", field: "valueH" },
-      { headerName: "Value I", field: "valueI" },
-      { headerName: "Value J", field: "valueJ" }
+      { headerName: 'ID', field: 'id' },
+      { headerName: 'Value A', field: 'valueA' },
+      { headerName: 'Value B', field: 'valueB' },
+      { headerName: 'Value C', field: 'valueC' },
+      { headerName: 'Value D', field: 'valueD' },
+      { headerName: 'Value E', field: 'valueE' },
+      { headerName: 'Value F', field: 'valueF' },
+      { headerName: 'Value G', field: 'valueG' },
+      { headerName: 'Value H', field: 'valueH' },
+      { headerName: 'Value I', field: 'valueI' },
+      { headerName: 'Value J', field: 'valueJ' }
     ];
     this.gridOptions.rowData = [];
     this.gridOptions.deltaRowDataMode = true;
@@ -50,7 +50,7 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeWebSocketConnection();
     this.webWorker.messageWorker.addEventListener('message', e => {
-      console.log("Received from worker:" + e.data);
+      console.log('Received from worker:' + e.data);
       if (e.data === 'Connect-Now') {
         this.initializeWebSocketConnection();
       }
@@ -58,17 +58,14 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
   }
 
   onGridReady(params) {
-    //this.gridOptions.api.setQuickFilter(this.gridOptions.api.getFilterModel);
-    //this.gridOptions.api.setQuickFilter
   }
 
   updateGrid() {
     const item = this.socketData.splice(0);
     if (this.gridOptions.api.getRowNode(item[0].id) === undefined) {
       console.log('adding');
-      this.gridOptions.api.updateRowData({ add: item })
-    }
-    else {
+      this.gridOptions.api.updateRowData({ add: item });
+    } else {
       console.log('updating');
       this.gridOptions.api.updateRowData({ update: item });
     }
@@ -76,9 +73,9 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
   }
 
   initializeWebSocketConnection() {
-    let ws = new SockJS(this.serverUrl);
+    const ws = new SockJS(this.serverUrl);
     this.stompClient = Stomp.over(ws);
-    let that = this;
+    const that = this;
     this.stompClient.connect({}, function (frame) {
       that.stompClient.subscribe('/grid-data', (message) => {
         if (message.body) {
@@ -93,14 +90,14 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
 
   onPrintQuickFilterTexts() {
     this.gridOptions.api.forEachNode((node) => {
-     // console.log('Quick filter text is ' + node.quickFilterAggregateText);
+      // console.log('Quick filter text is ' + node.quickFilterAggregateText);
     });
   }
 
   retryConnection() {
     this.tryAttempt += 1;
-    const message = ['Should-Reconnect-Websocket', this.tryAttempt]
-    this.webWorkerService.postMessage(message)
+    const message = ['Should-Reconnect-Websocket', this.tryAttempt];
+    this.webWorkerService.postMessage(message);
   }
 
   ngOnDestroy() {
