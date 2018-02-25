@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { AgGridModule } from "ag-grid-angular/main";
 import { AppComponent } from './app.component';
 import { MyGridApplicationComponent } from './my-grid-application/my-grid-application.component';
+import { WebWorkerService } from './services/web-worker.service';
 
 
 @NgModule({
@@ -16,7 +17,7 @@ import { MyGridApplicationComponent } from './my-grid-application/my-grid-applic
 
     )
   ],
-  providers: [],
+  providers: [WebWorkerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
