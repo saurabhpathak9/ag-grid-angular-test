@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
-import * as MessageWorker from 'worker-loader!../../web-workers/message.worker.bundle.js';
 
 @Injectable()
 export class WebWorkerService {
 
-  messageWorker: Worker = new MessageWorker();
+  messageWorker: Worker = new Worker(new URL('../../web-workers/message.worker', import.meta.url));
+
 
   constructor() {
   }
 
   postMessage(message: any) {
 
-    this.messageWorker.onmessage = function (event) {
+    this.messageWorker.onmessage = function(event) {
       const data = event.data;
     };
 
     const that = this;
 
-    setTimeout(function () {
+    setTimeout(() => {
       that.messageWorker.postMessage(message);
     }, 500);
   }

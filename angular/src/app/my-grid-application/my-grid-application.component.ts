@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { GridOptions } from 'ag-grid';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { GridOptions, GridApi } from 'ag-grid-community';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { WebWorkerService } from '../services/web-worker.service';
+
 
 @Component({
   selector: 'app-grid-application',
@@ -10,19 +11,19 @@ import { WebWorkerService } from '../services/web-worker.service';
   styleUrls: ['./my-grid-application.component.css']
 })
 export class MyGridApplicationComponent implements OnInit, OnDestroy {
-  private gridOptions = <GridOptions>{};
-  private gridApi;
+  gridOptions = <GridOptions>{};
+  gridApi = <GridApi>{};
   private serverUrl = 'http://localhost:8080/ag-grid-websocket';
-  private stompClient;
+  private stompClient: any;
   private socketData: any[] = [];
-  private rowCount: any = 0;
+  rowCount: any = 0;
   private tryAttempt: any = 0;
   private webWorker: WebWorkerService;
 
   constructor(private webWorkerService: WebWorkerService) {
-
     this.webWorker = webWorkerService;
     this.gridOptions = <GridOptions>{};
+    this.gridApi = <GridApi>{};
     this.gridOptions.columnDefs = [
       { headerName: 'ID', field: 'id' },
       { headerName: 'Value A', field: 'valueA' },
@@ -39,17 +40,17 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
     this.gridOptions.rowData = [];
     this.gridOptions.deltaRowDataMode = true;
     this.gridOptions.enableCellChangeFlash = true;
-    this.gridOptions.enableFilter = true;
+    //this.gridOptions.enableFilter = true;
     this.gridOptions.cacheQuickFilter = true;
-    this.gridOptions.floatingFilter = true;
-    this.gridOptions.getRowNodeId = function (data) {
+    // this.gridOptions.floatingFilter = true;
+    this.gridOptions.getRowNodeId = function(data) {
       return data.id;
     };
   }
 
   ngOnInit() {
     this.initializeWebSocketConnection();
-    this.webWorker.messageWorker.addEventListener('message', e => {
+    this.webWorker.messageWorker.addEventListener('message', (e) => {
       console.log('Received from worker:' + e.data);
       if (e.data === 'Connect-Now') {
         this.initializeWebSocketConnection();
@@ -57,40 +58,36 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
     }, false);
   }
 
-  onGridReady(params) {
+  onGridReady(params: any) {
+    this.gridApi = params.api;
   }
 
   updateGrid() {
     const item = this.socketData.splice(0);
-    if (this.gridOptions.api.getRowNode(item[0].id) === undefined) {
+    console.log(this.gridApi);
+    if (this.gridApi.getRowNode(item[0].id) === undefined) {
       console.log('adding');
-      this.gridOptions.api.updateRowData({ add: item });
+      this.gridApi.updateRowData({ add: item });
     } else {
       console.log('updating');
-      this.gridOptions.api.updateRowData({ update: item });
+      this.gridApi.updateRowData({ update: item });
     }
-    this.rowCount = this.gridOptions.api.getDisplayedRowCount();
+    this.rowCount = this.gridApi.getDisplayedRowCount();
   }
 
   initializeWebSocketConnection() {
     const ws = new SockJS(this.serverUrl);
     this.stompClient = Stomp.over(ws);
     const that = this;
-    this.stompClient.connect({}, function (frame) {
-      that.stompClient.subscribe('/grid-data', (message) => {
+    this.stompClient.connect({}, (frame: any) => {
+      that.stompClient.subscribe('/grid-data', (message: any) => {
         if (message.body) {
           that.socketData.push(JSON.parse(message.body));
           that.updateGrid();
         }
       });
-    }, function (error) {
+    }, (error: any) => {
       that.retryConnection();
-    });
-  }
-
-  onPrintQuickFilterTexts() {
-    this.gridOptions.api.forEachNode((node) => {
-      // console.log('Quick filter text is ' + node.quickFilterAggregateText);
     });
   }
 
@@ -105,6 +102,8 @@ export class MyGridApplicationComponent implements OnInit, OnDestroy {
   }
 
   disconnectWebSocketConnection() {
-    this.stompClient.disconnect();
+    if (this.stompClient !== undefined) {
+      this.stompClient.disconnect();
+    }
   }
 }
