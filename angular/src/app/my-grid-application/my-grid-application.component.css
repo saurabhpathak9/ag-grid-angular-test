@@ -1,0 +1,9 @@
+.navbar-header{
+    margin-left:5px;
+    width:100%;
+  }
+  
+span {
+    display: inline-block;
+    width: 90px;
+}

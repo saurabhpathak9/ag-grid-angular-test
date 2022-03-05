@@ -1,8 +1,18 @@
-<nav class="navbar navbar-light bg-light justify-content-between">
-  AG Grid Load Test
-  <span class="badge badge-secondary">{{ rowCount}} Rows</span>
-</nav>
-<div style="width: 100%;">
-  <ag-grid-angular #agGrid style="height: 500px;" class="ag-theme-dark" [gridOptions]="gridOptions">
+<div class="container-fluid">
+  <nav class="navbar navbar-light bg-light justify-content-between">
+    AG Grid Load Test
+    <span class="badge badge-warning">{{ rowCount}} Rows</span>
+
+  </nav>
+  <ag-grid-angular #agGrid style="width: 100%; height: 500px;" class="ag-theme-dark" [gridOptions]="gridOptions" (gridReady)="onGridReady($event)">
   </ag-grid-angular>
+  <div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-4">
+      <div class="btn-group float-right mt-2" role="group" aria-label="Basic example">
+        <button type="button" (click)="initializeWebSocketConnection()" class="btn btn-success">Connect</button>
+        <button type="button" (click)="disconnectWebSocketConnection()" class="btn btn-danger">Disconnect</button>
+      </div>
+    </div>
+  </div>
 </div>
