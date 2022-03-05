@@ -18,7 +18,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ag-grid-websocket").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ag-grid-websocket").setAllowedOrigins("http://localhost:4200").withSockJS();
     }
 
 }

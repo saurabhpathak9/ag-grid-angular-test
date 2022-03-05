@@ -9,7 +9,7 @@ public class GridDataUtil {
 
 	public static GridData getSampleData() {
 		GridData data = new GridData();
-		data.setId(String.valueOf(new Random().nextInt((10000) + 1) + 1));
+		data.setId(String.valueOf(new Random().nextInt((99) + 1) + 1));
 		data.setValueA(getRandom());
 		data.setValueB(getRandom());
 		data.setValueC(getRandom());
